@@ -1,8 +1,16 @@
-import Theatre from '../easel/Theatre.js';
-import Texture from '../easel/Texture.js';
-import Velocity from '../easel/Velocity.js';
-import Keyboard from '../easel/Keyboard.js';
-import { Rectangle, Circle, Point } from '../easel/Shape.js'
+import Theatre from './easel/Theatre.js';
+import Messenger from './easel/Messenger.js'
+import Texture from './easel/Texture.js';
+import Velocity from './easel/Velocity.js';
+import Keyboard from './easel/Keyboard.js';
+import { Rectangle, Circle, Point } from './easel/Shape.js'
+
+// API
+//const messenger = new Messenger("http://0.0.0.0:8000", "ws://0.0.0.0:8000");
+
+//messenger.addHandler("playerJoin", (data) => {
+//   cars.push(data.id, 0, 0);
+//});
 
 // Theatre Setup
 const canvasElement = document.getElementById("theatre");
@@ -17,7 +25,8 @@ theatre.redraw = render;
 const cars = [];
 
 class Car {
-    constructor(x, y) {
+    constructor(id, x, y) {
+        this.id;
         this.shape = new Circle(x, y, 8);
         this.v = new Velocity(0,0);
         this.angle = 0;
@@ -25,8 +34,8 @@ class Car {
 }
 
 const center = 1024/2;
-cars.push(new Car(center, center));
-cars.push(new Car(center-50, center-50));
+cars.push(new Car(cars.length, center, center));
+cars.push(new Car(cars.length, center-50, center-50));
 
 
 const bg = new Texture('./media/bg.png');
@@ -39,7 +48,7 @@ function render(callAnimationFrame = false) {
     const offsetY = player.y;
 
     ctx.clearRect(-theatre.canvas.width/2, -theatre.canvas.height/2, theatre.canvas.width, theatre.canvas.height);
-    bg.draw(-offsetX, -offsetY, 0, ctx);
+    bg.draw(Math.floor(-offsetX), Math.floor(-offsetY), 0, ctx);
 
     // draw circles
     ctx.fillStyle = "blue";
@@ -95,6 +104,12 @@ keyboard.bindValue('ArrowDown', v => controls.down = v);
 setInterval(() => {
     controller();
     physics();
+
+//  messenger.sendMessage({
+//      type: "move",
+//      v: cars[0].v,
+//      shape: cars[0].shape
+//  })
 }, 20);
 
 render(true);
